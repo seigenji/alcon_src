@@ -23,6 +23,8 @@ def main(datasetdir, lv):
     """
 
     # 初期化
+    print("Now evaluation...")
+
     alcon = AlconUtils(datasetdir)
     myalgorithm = MyAlgorithm(datasetdir)
 
@@ -57,7 +59,7 @@ def main(datasetdir, lv):
 
     # ファイルに結果を書き込む
     alcon.write_results( results )
-    
+
 if __name__ == "__main__":
     if len(sys.argv) != 3:
         print("usage: python main.py datasetdir lv", file=sys.stderr)

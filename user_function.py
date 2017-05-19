@@ -60,7 +60,16 @@ class MyAlgorithm(object):
     @classmethod
     def feature_extraction(cls, img):
         """
-        特徴抽出のサンプル（画像を引き伸ばしてベクトル化しているだけ）
+        特徴抽出
         """
-        img_ = cv2.resize(img, (32, 32))
+        gray_image = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        blur_image = cv2.bilateralFilter(gray_image, 25, 12,3)
+        ret, binary_image = cv2.threshold(blur_image, 0,255,cv2.THRESH_BINARY | cv2.THRESH_OTSU)
+
+        img_ = cv2.resize(binary_image, (32, 32))
+
+        # cv2.imshow("images", img_)
+        # cv2.waitKey(0)
+        # cv2.dastroyALLwindows()
+
         return img_.reshape(-1)
