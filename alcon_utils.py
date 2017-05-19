@@ -36,7 +36,7 @@ class AlconUtils(object):
                     count += 1
             
         print("results: %d / %d" % (count, all_count))
-        print("score: %f" % (1.0 * count / all_count))
+        print("score: %f" % (100.0 * count / all_count))
         return count, all_count
 
 

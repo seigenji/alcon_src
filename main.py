@@ -19,6 +19,7 @@ from alcon_utils import AlconUtils
 
 def main(datasetdir, lv):
     start = time.time()
+
     """
     評価コードのメイン
     :param datasetdir データセットを格納したディレクトリへのパス
@@ -61,6 +62,7 @@ def main(datasetdir, lv):
 
     # ファイルに結果を書き込む
     alcon.write_results( results )
+
 
     elapsed_time = time.time() - start
     print ("elapsed_time:", elapsed_time, "[sec]")
