@@ -12,35 +12,29 @@ import keras
 from keras import backend
 from keras.models import Sequential
 from keras.layers import Dense, Flatten, Dropout, Conv2D, MaxPooling2D
-from keras.optimizers import SGD
 import tensorflow
 
 def main(datasetdir,lv):    
     config = tensorflow.ConfigProto()
     config.gpu_options.per_process_gpu_memory_fraction = 0.95
-    K.tensorflow_backend.set_session(tensorflow.Session(config=config))
+    backend.tensorflow_backend.set_session(tensorflow.Session(config=config))
     
     # 初期化
     alcon = AlconUtils(datasetdir)
 
     # アノテーションの読み込み
-    fn = "target_lv" + lv + ".csv"
-    alcon.load_annotations_target(fn)
-
-    fn = "groundtruth_lv" + lv + ".csv"
-    alcon.load_annotations_ground(fn)
-
+    alcon.load_annotations_target("target_lv"      + lv + ".csv")
+    alcon.load_annotations_ground("groundtruth_lv" + lv + ".csv")
     
-    # KNNモデルの作成
     dataset = {}
     print("len(alcon.targets.items()):", len(alcon.targets.items()))
     for bb_id, target in alcon.targets.items():
-        img_filename = alcon.get_filename_char( bb_id )
         code = alcon.ground_truth[bb_id][0]
         if code not in dataset:
             dataset[code] = []
-        if len(dataset[code]) == 75:
+        if len(dataset[code]) == 5:
             continue
+        img_filename = alcon.get_filename_char( bb_id )
         img = cv2.imread( img_filename )
         feature = MyAlgorithm.feature_extraction(img)
         dataset[code].append(feature)
@@ -48,33 +42,26 @@ def main(datasetdir,lv):
     labels = []
     data = []
     classes = sorted(dataset.keys())
-    print("len(dataset.items()):", len(dataset.items()))
+
+    len_values = len(list(dataset.values())[0])
     for label, values in dataset.items():
-        labels += [classes.index(label)] * len(values)
+        labels += [classes.index(label)] * len_values
         data += values
 
-    data = np.asarray(data, dtype=np.float)
-    labels = np.asarray(labels, dtype=np.int)
-
-    print("data.shape:", data.shape)
-    print("labels.shape:", labels.shape)
 
     batch_size = 128
     num_classes = 46
     epochs = 12
     img_rows, img_cols = 32, 32
     channel = 1
-    x_train = data
 
-    x_train = x_train.reshape(x_train.shape[0],img_rows,img_cols, channel ).astype('float32')
-    input_shape = (img_rows, img_cols, channel)
-    
+ 
     y_train = keras.utils.to_categorical(labels, num_classes)
     
     classifier = Sequential()
 
-    classifier.add(Conv2D(32, kernel_size=(3,3), activation='relu', input_shape=input_shape,padding='same'))
-    classifier.add(Conv2D(64,                 (3,3), activation='relu',                                  padding='same'))
+    classifier.add(Conv2D(32, kernel_size=(3,3), activation='relu', input_shape=(img_rows, img_cols, channel),padding='same'))
+    classifier.add(Conv2D(64,             (3,3), activation='relu',                                           padding='same'))
     classifier.add(MaxPooling2D(pool_size=(6,6)))
     classifier.add(Dropout(0.25))
     classifier.add(Flatten())
@@ -84,8 +71,13 @@ def main(datasetdir,lv):
     
     classifier.compile(loss=keras.losses.categorical_crossentropy,optimizer=keras.optimizers.Nadam(),metrics=['accuracy'])
 
-    
-    classifier.fit(x_train,y_train,batch_size=batch_size,epochs=epochs,verbose=1,validation_data=None)
+    numpy_data = numpy.asarray(data, dtype=numpy.float)
+    float_data = numpy_data.reshape(numpy_data.shape[0],img_rows,img_cols, channel )\
+                           .astype('float32')
+
+    numpy_labels = numpy.asarray(labels, dtype=numpy.int)
+    y_train = keras.utils.to_categorical(numpy_labels, num_classes)
+    classifier.fit(float_data,y_train,batch_size=batch_size,epochs=epochs,verbose=1,validation_data=None)
 
     outputfile = "./model.pkl"
     outputfile2 = "./model2.pkl"
@@ -98,5 +90,3 @@ if __name__ == "__main__":
         quit()
 
     main(sys.argv[1], sys.argv[2])
-
-

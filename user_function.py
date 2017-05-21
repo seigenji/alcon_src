@@ -62,13 +62,8 @@ class MyAlgorithm(object):
         """
         特徴抽出
         """
-        # blur_image = cv2.bilateralFilter(img, 14, 12, 3)
-        # gray_image = cv2.cvtColor(blur_image, cv2.COLOR_BGR2GRAY)
-        # ret, binary_image = cv2.threshold(gray_image, 0,255,cv2.THRESH_BINARY | cv2.THRESH_OTSU)
-
         gray_image = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        blur_image = cv2.adaptiveBilateralFilter(gray_image, 14, 14)
-        # blur_image = cv2.bilateralFilter(gray_image, 14, 14, 3)
+        blur_image = cv2.bilateralFilter(gray_image, 14, 14, 3)
         ret, binary_image = cv2.threshold(blur_image, 0,255,cv2.THRESH_BINARY | cv2.THRESH_OTSU)
 
         img_ = cv2.resize(binary_image, (32, 32))

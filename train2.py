@@ -6,10 +6,11 @@ import os
 import os.path
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.externals import joblib
-from user_function import MyAlgorithm # ファイル名　クラス名 
+from user_function import MyAlgorithm
 from alcon_utils import AlconUtils
 import numpy as np
 import cv2
+
 
 def main(datasetdir,lv):
 
@@ -17,10 +18,10 @@ def main(datasetdir,lv):
     alcon = AlconUtils(datasetdir)
 
     # アノテーションの読み込み
-    fn = "target_lv" + lv + "_samp_5.csv"
+    fn = "target_lv2.csv"
     alcon.load_annotations_target(fn)
 
-    fn = "groundtruth_lv" + lv + "_samp_5.csv"
+    fn = "groundtruth_lv2.csv"
     alcon.load_annotations_ground(fn)
 
     
@@ -31,8 +32,8 @@ def main(datasetdir,lv):
         code = alcon.ground_truth[bb_id][0]
         if code not in dataset:
             dataset[code] = []
-        if len(dataset[code]) == 5:
-            continue
+        # if len(dataset[code]) == 5:
+        #     continue
         img = cv2.imread( img_filename )
         feature = MyAlgorithm.feature_extraction(img)
         dataset[code].append(feature)
@@ -42,10 +43,9 @@ def main(datasetdir,lv):
     classes = sorted(dataset.keys())
     for label, values in dataset.items():
         labels += [classes.index(label)] * len(values)
-        data += values # データを配列に突っ込む
+        data += values
 
-    print(data[0])
-    data   = np.asarray(data,   dtype=np.float)
+    data = np.asarray(data, dtype=np.float)
     labels = np.asarray(labels, dtype=np.int)
 
     classifier = KNeighborsClassifier() #編集
