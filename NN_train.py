@@ -5,11 +5,11 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.externals import joblib
 from user_function import MyAlgorithm
 from alcon_utils import AlconUtils
-import numpy
+import numpy as np
 import cv2
 
 import keras
-from keras import backend
+from keras import backend as K
 from keras.models import Sequential
 from keras.layers import Dense, Flatten, Dropout, Conv2D, MaxPooling2D
 from keras.optimizers import SGD

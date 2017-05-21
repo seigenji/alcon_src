@@ -105,13 +105,13 @@ class MyAlgorithm(object):
         """
         gray_image = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         blur_image = cv2.bilateralFilter(gray_image, 14, 14, 3)
-        ret, binary_image = cv2.threshold(blur_image, 0,255,cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)
+        ret, binary_image = cv2.threshold(blur_image, 0,255,cv2.THRESH_BINARY | cv2.THRESH_OTSU)
         img32 = cv2.resize(binary_image, (32, 32))
         thined_img = MyAlgorithm.thinning(img32)
 
-        cv2.imshow("images", thined_img)
-        cv2.waitKey(0)
-        sys.exit()
+        # cv2.imshow("images", thined_img)
+        # cv2.waitKey(0)
+        # sys.exit()
 
         return img32.reshape(-1)
 
