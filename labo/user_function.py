@@ -18,6 +18,8 @@ import os.path
 import cv2
 from sklearn.externals import joblib
 import keras
+import numpy as np
+import sys
 
 class MyAlgorithm(object):
     """
@@ -65,5 +67,47 @@ class MyAlgorithm(object):
         gray_image = cv2.cvtColor(blur_image, cv2.COLOR_BGR2GRAY)
         ret, binary_image = cv2.threshold(gray_image, 0,255,cv2.THRESH_BINARY | cv2.THRESH_OTSU)
         img_ = cv2.resize(binary_image, (32, 32))
-        return img_/255.0
+        thined_image = MyAlgorithm.thinning(img_)
+        
+        cv2.imshow("name", thined_image)
+        sys.exit()
+        
+        return thined_image
+    
+    @staticmethod
+    def thinning(img):
+        kpw = np.array([[[ 0., 0., 0. ], [ 0., 1., 1. ], [ 0., 1., 0. ]],
+                        [[ 0., 0., 0. ], [ 0., 1., 0. ], [ 1., 1., 0. ]],
+                        [[ 0., 0., 0. ], [ 1., 1., 0. ], [ 0., 1., 0. ]],
+                        [[ 1., 0., 0. ], [ 1., 1., 0. ], [ 0., 0., 0. ]],
+                        [[ 0., 1., 0. ], [ 1., 1., 0. ], [ 0., 0., 0. ]],
+                        [[ 0., 1., 1. ], [ 0., 1., 0. ], [ 0., 0., 0. ]],
+                        [[ 0., 1., 0. ], [ 0., 1., 1. ], [ 0., 0., 0. ]],
+                        [[ 0., 0., 0. ], [ 0., 1., 1. ], [ 0., 0., 1. ]]])
+        kpb = np.array([[[ 1., 1., 0. ], [ 1., 0., 0. ], [ 0., 0., 0. ]],
+                        [[ 1., 1., 1. ], [ 0., 0., 0. ], [ 0., 0., 0. ]],
+                        [[ 0., 1., 1. ], [ 0., 0., 1. ], [ 0., 0., 0. ]],
+                        [[ 0., 0., 1. ], [ 0., 0., 1. ], [ 0., 0., 1. ]],
+                        [[ 0., 0., 0. ], [ 0., 0., 1. ], [ 0., 1., 1. ]],
+                        [[ 0., 0., 0. ], [ 0., 0., 0. ], [ 1., 1., 1. ]],
+                        [[ 0., 0., 0. ], [ 1., 0., 0. ], [ 1., 1., 0. ]],
+                        [[ 1., 0., 0. ], [ 1., 0., 0. ], [ 1., 0., 0. ]]])
+        src_w = np.array(img, dtype=np.float32)/255.
+        thresh, src_b = cv2.threshold(src_w, 0.5, 1., cv2.THRESH_BINARY_INV)
+        thresh, src_f = cv2.threshold(src_w, 0.5, 1., cv2.THRESH_BINARY)
+        src_w = src_f.copy()
+        th = 1.
+        while th > 0:
+            th = 0.
+            for i in range(8):
+                src_w = cv2.filter2D(src_w, cv2.CV_32F, kpw[i])
+                src_b = cv2.filter2D(src_b, cv2.CV_32F, kpb[i])
+                thresh, src_w = cv2.threshold(src_w, 2.99, 1, cv2.THRESH_BINARY)
+                thresh, src_b = cv2.threshold(src_b, 2.99, 1, cv2.THRESH_BINARY)
+                src_w = np.array(np.logical_and(src_w,src_b), dtype=np.float32)
+                th += np.sum(src_w)
+                src_f = np.array(np.logical_xor(src_f, src_w), dtype=np.float32)
+                src_w = src_f.copy()
+                thresh, src_b = cv2.threshold(src_f, 0.5, 1.0, cv2.THRESH_BINARY_INV)
+        return src_f
 
