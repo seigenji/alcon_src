@@ -27,7 +27,6 @@ def main(datasetdir,lv):
     alcon.load_annotations_ground("groundtruth_lv" + lv + ".csv")
     
     dataset = {}
-    print("len(alcon.targets.items()):", len(alcon.targets.items()))
     for bb_id, target in alcon.targets.items():
         code = alcon.ground_truth[bb_id][0]
         if code not in dataset:
@@ -43,9 +42,8 @@ def main(datasetdir,lv):
     data = []
     classes = sorted(dataset.keys())
 
-    len_values = len(list(dataset.values())[0])
     for label, values in dataset.items():
-        labels += [classes.index(label)] * len_values
+        labels += [classes.index(label)] * len(values)
         data += values
 
 
@@ -60,16 +58,17 @@ def main(datasetdir,lv):
     
     classifier = Sequential()
 
-    classifier.add(Conv2D(32, kernel_size=(3,3), activation='relu', input_shape=(img_rows, img_cols, channel),padding='same'))
-    classifier.add(Conv2D(64,             (3,3), activation='relu',                                           padding='same'))
-    classifier.add(MaxPooling2D(pool_size=(6,6)))
-    classifier.add(Dropout(0.25))
+    classifier.add(Conv2D(32, kernel_size=(3,3), activation='relu', input_shape=(img_rows, img_cols, channel)))
+    classifier.add(Conv2D(64,             (3,3), activation='relu'))
+    classifier.add(MaxPooling2D(pool_size=(4,4)))
+    classifier.add(Dropout(0.5))
     classifier.add(Flatten())
     classifier.add(Dense(128, activation='relu'))
     classifier.add(Dropout(0.5))
     classifier.add(Dense(num_classes, activation='softmax'))
     
     classifier.compile(loss=keras.losses.categorical_crossentropy,optimizer=keras.optimizers.Nadam(),metrics=['accuracy'])
+    classifier.summary()
 
     numpy_data = numpy.asarray(data, dtype=numpy.float)
     float_data = numpy_data.reshape(numpy_data.shape[0],img_rows,img_cols, channel )\
