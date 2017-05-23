@@ -31,7 +31,7 @@ def main(datasetdir,lv):
         code = alcon.ground_truth[bb_id][0]
         if code not in dataset:
             dataset[code] = []
-        if len(dataset[code]) == 5:
+        if len(dataset[code]) == 10:
             continue
         img_filename = alcon.get_filename_char( bb_id )
         img = cv2.imread( img_filename )
@@ -57,10 +57,12 @@ def main(datasetdir,lv):
     y_train = keras.utils.to_categorical(labels, num_classes)
     
     classifier = Sequential()
-
-    classifier.add(Conv2D(32, kernel_size=(3,3), activation='relu', input_shape=(img_rows, img_cols, channel)))
-    classifier.add(Conv2D(64,             (3,3), activation='relu'))
+    classifier.add(keras.layers.normalization.BatchNormalization(input_shape=(img_rows, img_cols, channel)))
+    classifier.add(Conv2D(32, (3,3), activation='relu'))
+    classifier.add(Conv2D(64, (3,3), activation='relu'))
     classifier.add(MaxPooling2D(pool_size=(4,4)))
+    classifier.add(Conv2D(64, (3,3), activation='relu', padding='same'))
+    classifier.add(Conv2D(64, (3,3), activation='relu', padding='same'))
     classifier.add(Dropout(0.5))
     classifier.add(Flatten())
     classifier.add(Dense(128, activation='relu'))
