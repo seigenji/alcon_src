@@ -21,8 +21,8 @@ def main(datasetdir,lv, length):
     alcon = AlconUtils(datasetdir)
 
     # アノテーションの読み込み
-    alcon.load_annotations_target("target_lv"      + lv + ".csv")
-    alcon.load_annotations_ground("groundtruth_lv" + lv + ".csv")
+    alcon.load_annotations_target("target_lv1_samp_0.9.csv")
+    alcon.load_annotations_ground("groundtruth_lv1_samp_0.9.csv")
     
     dataset = {}
     for bb_id, target in alcon.targets.items():
@@ -53,6 +53,10 @@ def main(datasetdir,lv, length):
     classifier.add(Conv2D(32, kernel_size=(3,3), activation='relu')) # 30*30
     classifier.add(Conv2D(64,                 (3,3), activation='relu')) # 28*28 
     classifier.add(Dropout(0.5))
+    classifier.add(Conv2D(64,                 (3,3), activation='relu', padding = 'same')) # 28*28 
+    classifier.add(Conv2D(64,                 (3,3), activation='relu', padding = 'same')) # 28*28 
+    classifier.add(Conv2D(64,                 (3,3), activation='relu', padding = 'same')) # 28*28 
+    classifier.add(Conv2D(64,                 (3,3), activation='relu', padding = 'same')) # 28*28 
     classifier.add(MaxPooling2D(pool_size=(4,4)))                      # 7*7
     classifier.add(Flatten())
     classifier.add(Dense(128, activation='relu'))
