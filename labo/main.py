@@ -15,13 +15,8 @@ import cv2
 import time
 from user_function import MyAlgorithm
 from alcon_utils import AlconUtils
-try:
-    from StringIO import StringIO
-except ImportError:
-    from io import StringIO
 
 def main(datasetdir, lv):
-    sys.stdout = StringIO()
     start_time = time.time()
     """
     評価コードのメイン
@@ -33,9 +28,7 @@ def main(datasetdir, lv):
     myalgorithm = MyAlgorithm(datasetdir)
 
     # ターゲットの読み込み
-    fn = "target_lv" + lv + "_test_5.csv"
-    alcon.load_annotations_target(fn)
-
+    alcon.load_annotations_target("target_lv1_test_0.1.csv")
     
     results = {}
     prev = None
@@ -57,9 +50,7 @@ def main(datasetdir, lv):
 
         
     # 評価
-    fnGround = "groundtruth_lv" + lv + "_test_5.csv"
-    alcon.load_annotations_ground(fnGround)
-    sys.stdout = sys.__stdout__
+    alcon.load_annotations_ground("groundtruth_lv1_test_0.1.csv")
     alcon.evaluation( results )
 
     # ファイルに結果を書き込む
