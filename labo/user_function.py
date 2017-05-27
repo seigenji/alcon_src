@@ -46,7 +46,7 @@ class MyAlgorithm(object):
         target_img = full_img[y:y+h, x:x+w, :]
 
         # 画像から特徴抽出
-        feature = self.feature_extraction(target_img).reshape(1,32,32, 1) # pages rows cols channel
+        feature = self.feature_extraction(target_img).reshape(1, 32, 32, 1) # pages rows cols channel
         
         # 識別器にかける
         recog_result = self.classifier.predict_classes(feature)
@@ -62,7 +62,7 @@ class MyAlgorithm(object):
         """
         特徴抽出
         """
-        blur_image = cv2.bilateralFilter(img, 14, 14, 3)# 14 14 3
+        blur_image = cv2.bilateralFilter(img, 5, 5, 3)# 14 14 3
         gray_image = cv2.cvtColor(blur_image, cv2.COLOR_BGR2GRAY)
-        ret, binary_image = cv2.threshold(gray_image, 0,255,cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)
+        ret, binary_image = cv2.threshold(gray_image, 0,255, cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)
         return cv2.resize(binary_image, (32, 32))

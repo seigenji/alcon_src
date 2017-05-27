@@ -14,7 +14,7 @@ def main(datasetdir,lv, length):
     pr = cProfile.Profile()
     pr.enable()
     config = tensorflow.ConfigProto()
-    config.gpu_options.per_process_gpu_memory_fraction = 0.2
+    config.gpu_options.per_process_gpu_memory_fraction = 0.93
     keras.backend.tensorflow_backend.set_session(tensorflow.Session(config=config))
     
     # 初期化

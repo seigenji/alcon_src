@@ -1,2 +1,4 @@
 model*
 dataset_coordinate.csv
+*.csv
+.ipynb_checkpoints
