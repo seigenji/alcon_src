@@ -8,11 +8,11 @@ import cv2
 import keras
 from keras.layers import Dense, Flatten, Dropout, Conv2D, MaxPooling2D
 import tensorflow
-import cProfile, pstats
+#import cProfile, pstats
 
 def main(datasetdir,lv, length):
-    pr = cProfile.Profile()
-    pr.enable()
+    #pr = cProfile.Profile()
+    #pr.enable()
     config = tensorflow.ConfigProto()
     config.gpu_options.per_process_gpu_memory_fraction = 0.93
     keras.backend.tensorflow_backend.set_session(tensorflow.Session(config=config))
@@ -56,7 +56,6 @@ def main(datasetdir,lv, length):
     classifier.add(Conv2D(64,                 (3,3), activation='relu', padding = 'same')) # 28*28 
     classifier.add(Conv2D(64,                 (3,3), activation='relu', padding = 'same')) # 28*28 
     classifier.add(Conv2D(64,                 (3,3), activation='relu', padding = 'same')) # 28*28 
-    classifier.add(Conv2D(64,                 (3,3), activation='relu', padding = 'same')) # 28*28 
     classifier.add(MaxPooling2D(pool_size=(4,4)))                      # 7*7
     classifier.add(Flatten())
     classifier.add(Dense(128, activation='relu'))
@@ -64,14 +63,16 @@ def main(datasetdir,lv, length):
     classifier.add(Dense(num_classes, activation='softmax'))
     
     classifier.compile(loss=keras.losses.categorical_crossentropy, optimizer=keras.optimizers.Nadam(),metrics=['accuracy'])
+    classifier.summary()
+
     x_data = np.asarray(data).reshape(len(data), *input_shape)
     y_train = keras.utils.to_categorical( labels, num_classes )
     classifier.fit(x_data, y_train, batch_size= 84, epochs=12)
 
     joblib.dump(classes, "./model.pkl")
     classifier.save("./model2.pkl")
-    pr.disable()
-    pstats.Stats(pr).sort_stats('tottime').print_stats(5)
+    #pr.disable()
+    #pstats.Stats(pr).sort_stats('tottime').print_stats(5)
 
 if __name__ == "__main__":
     if len(sys.argv) != 4:
