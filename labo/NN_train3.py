@@ -48,7 +48,6 @@ def main(datasetdir,lv, length):
     input_shape = (32, 32, 1)# img_rows img_cols channel
     
     classifier = keras.models.Sequential()
-
     classifier.add(keras.layers.normalization.BatchNormalization(input_shape = input_shape))
     classifier.add(Conv2D(32, kernel_size=(3,3), activation='relu')) # 30*30
     classifier.add(Conv2D(64,                 (3,3), activation='relu')) # 28*28 
