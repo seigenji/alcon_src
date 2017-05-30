@@ -35,6 +35,7 @@ def predict_preprocess(full_img, bbox):
 
 for bb_id, target in alcon.targets.items():
     img_file_id, *bb = target
+    print(bb_id)
     # ページ全体の画像
     imgs[bb_id] = cv2.imread( os.path.join(datasetdir, "images", img_file_id+".jpg") )
     results_pre[bb_id] = predict_preprocess(imgs[bb_id], bb)
