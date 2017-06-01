@@ -5,7 +5,7 @@ import cv2
 import os.path
 import pickle
 
-datasetdir = "/share/alcon/dataset/"
+datasetdir = "../../dataset/"
 annotation_name = "iiyama_0.1"
 """
 評価コードのメイン
