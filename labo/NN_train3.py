@@ -8,11 +8,11 @@ import cv2
 import keras
 from keras.layers import Dense, Flatten, Dropout, Conv2D, MaxPooling2D
 import tensorflow
-#import cProfile, pstats
+import cProfile, pstats
 
 def main(datasetdir,lv, length):
-    #pr = cProfile.Profile()
-    #pr.enable()
+    pr = cProfile.Profile()
+    pr.enable()
     config = tensorflow.ConfigProto()
     config.gpu_options.per_process_gpu_memory_fraction = 0.93
     keras.backend.tensorflow_backend.set_session(tensorflow.Session(config=config))
@@ -52,9 +52,6 @@ def main(datasetdir,lv, length):
     classifier.add(Conv2D(32, kernel_size=(3,3), activation='relu')) # 30*30
     classifier.add(Conv2D(64,                 (3,3), activation='relu')) # 28*28 
     classifier.add(Dropout(0.5))
-    classifier.add(Conv2D(64,                 (3,3), activation='relu', padding = 'same')) # 28*28 
-    classifier.add(Conv2D(64,                 (3,3), activation='relu', padding = 'same')) # 28*28 
-    classifier.add(Conv2D(64,                 (3,3), activation='relu', padding = 'same')) # 28*28 
     classifier.add(MaxPooling2D(pool_size=(4,4)))                      # 7*7
     classifier.add(Flatten())
     classifier.add(Dense(128, activation='relu'))
@@ -70,8 +67,8 @@ def main(datasetdir,lv, length):
 
     joblib.dump(classes, "./model.pkl")
     classifier.save("./model2.pkl")
-    #pr.disable()
-    #pstats.Stats(pr).sort_stats('tottime').print_stats(5)
+    pr.disable()
+    pstats.Stats(pr).sort_stats('tottime').print_stats(5)
 
 if __name__ == "__main__":
     if len(sys.argv) != 4:
