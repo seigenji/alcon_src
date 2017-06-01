@@ -30,7 +30,12 @@ class MyAlgorithm(object):
         #trained_file = os.path.join(datasetdir, "model.pkl")
         trained_file = "./model.pkl"
         self.classes, self.classifier = joblib.load(trained_file)
-
+           
+    @staticmethod
+    def split3(array):
+        num_split_v = array.shape[0] // 3
+        return np.vsplit(array, (num_split_v, num_split_v * 2))
+     
         
     def predict(self, full_img, bbox):
         """
@@ -44,7 +49,7 @@ class MyAlgorithm(object):
         x, y, w, h = bbox
         target_img = full_img[y:y+h, x:x+w, :]
         
-        splited_img = split3(target_img)
+        splited_img = MyAlgorithm.split3(target_img)
 
         # 画像から特徴抽出
         feature_arr = []
@@ -69,7 +74,4 @@ class MyAlgorithm(object):
         plt.imshow(img)
         img_ = cv2.resize(img, (32, 32))
         return img_.reshape(-1)
-    
-    def split3(array):
-        num_split_v = array.shape[0] // 3
-        return np.vsplit(array, (num_split_v, num_split_v * 2))
+

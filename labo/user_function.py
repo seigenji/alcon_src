@@ -20,6 +20,7 @@ from sklearn.externals import joblib
 import keras
 import numpy as np
 import sys
+from keras.preprocessing.image import ImageDataGenerator
 
 class MyAlgorithm(object):
     """
@@ -65,6 +66,5 @@ class MyAlgorithm(object):
         blur_image = cv2.bilateralFilter(img, 14, 14, 3)# 14 14 3
         gray_image = cv2.cvtColor(blur_image, cv2.COLOR_BGR2GRAY)
         ret, binary_image = cv2.threshold(gray_image, 0,255, cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)
-        img32 = cv2.resize(binary_image, (32, 32))
-        #cv2.imwrite("result/" + str( np.sum(gray_image) ) + ".png", img32)
+        img32 = cv2.resize(binary_image, (32, 32)).reshape(1, 32, 32, 1)
         return img32
